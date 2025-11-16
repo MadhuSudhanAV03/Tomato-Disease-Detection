@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════════
+    TOMATO DISEASE DETECTION - HOW TO RUN
+═══════════════════════════════════════════════════════════
+
+STEP 1: Create Virtual Environment (First Time Only)
+-----------------------------------------------------
+python -m venv venv
+
+
+STEP 2: Activate Virtual Environment
+-------------------------------------
+venv\Scripts\activate
+
+
+STEP 3: Install Dependencies
+-----------------------------
+pip install -r requirements.txt
+
+
+STEP 4: Run the Application
+----------------------------
+python app.py
+
+
+STEP 5: Open in Browser
+------------------------
+http://localhost:5000
+
+
+═══════════════════════════════════════════════════════════
+That's it! Your application is now running.
+═══════════════════════════════════════════════════════════
+
+
+TROUBLESHOOTING:
+----------------
+If port 5000 is busy, kill the process:
+    netstat -ano | findstr :5000
+    taskkill /PID <PID_NUMBER> /F
+
+If modules are missing:
+    pip install -r requirements.txt --upgrade
