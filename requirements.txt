@@ -1,0 +1,9 @@
+flask>=2.0
+tensorflow>=2.10
+Pillow
+numpy
+requests
+beautifulsoup4
+SpeechRecognition
+gTTS
+pydub

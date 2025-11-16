@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profit Analysis Result - TomatoCare AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">🌿FarmIQ</a>
+        <ul class="navbar-menu">
+          <li class="navbar-item">
+            <a href="/" class="navbar-link">Disease Prediction</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/profit-analyser" class="navbar-link active">Profit Analyser</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/voice-ai" class="navbar-link">Voice AI</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <main class="container">
+        <header class="result-header">
+          <h1>📊 Profit Analysis Report</h1>
+          <p class="muted">Government-based analysis with realistic projections</p>
+          <p class="small" style="margin-top: 0.5rem;">
+            <strong>Data Source:</strong> {{ analysis.data_source }} | 
+            <strong>Updated:</strong> {{ analysis.last_updated }}
+          </p>
+        </header>
+
+        <!-- Farm Details Card -->
+        <section class="profit-card">
+          <div class="profit-card-header">
+            <h2>🌾 Farm Details</h2>
+          </div>
+          <div class="profit-card-body">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Crop Type</span>
+                <span class="detail-value">{{ data.crop_type }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Season</span>
+                <span class="detail-value">{{ data.season }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Land Size</span>
+                <span class="detail-value">{{ data.land_size }} acres</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Total Plants</span>
+                <span class="detail-value">{{ '{:,}'.format(data.num_plants) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Farming Type</span>
+                <span class="detail-value">{{ data.farming_type }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Organic</span>
+                <span class="detail-value">{{ data.organic }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Expected Yield Card -->
+        <section class="profit-card">
+          <div class="profit-card-header">
+            <h2>📦 Expected Yield</h2>
+          </div>
+          <div class="profit-card-body">
+            <div class="metric-large">
+              <span class="metric-label">Total Yield</span>
+              <span class="metric-value-primary">{{ '{:,.0f}'.format(analysis.total_yield_kg) }} kg</span>
+              <span class="metric-subtitle">({{ '{:,.2f}'.format(analysis.total_yield_quintals) }} quintals)</span>
+            </div>
+            
+            <div class="quality-grid">
+              <div class="quality-item grade-a">
+                <div class="quality-icon">🏆</div>
+                <div class="quality-details">
+                  <span class="quality-label">Grade A</span>
+                  <span class="quality-value">{{ analysis.grade_a_percent }}%</span>
+                  <span class="quality-kg">{{ '{:,.0f}'.format(analysis.grade_a_kg) }} kg</span>
+                </div>
+              </div>
+              <div class="quality-item grade-b">
+                <div class="quality-icon">⭐</div>
+                <div class="quality-details">
+                  <span class="quality-label">Grade B</span>
+                  <span class="quality-value">{{ analysis.grade_b_percent }}%</span>
+                  <span class="quality-kg">{{ '{:,.0f}'.format(analysis.grade_b_kg) }} kg</span>
+                </div>
+              </div>
+              <div class="quality-item grade-c">
+                <div class="quality-icon">📦</div>
+                <div class="quality-details">
+                  <span class="quality-label">Grade C</span>
+                  <span class="quality-value">{{ analysis.grade_c_percent }}%</span>
+                  <span class="quality-kg">{{ '{:,.0f}'.format(analysis.grade_c_kg) }} kg</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Revenue Card -->
+        <section class="profit-card">
+          <div class="profit-card-header">
+            <h2>💰 Revenue Estimation</h2>
+          </div>
+          <div class="profit-card-body">
+            <div class="revenue-grid">
+              <div class="revenue-item positive">
+                <span class="revenue-label">💵 Market Revenue</span>
+                <span class="revenue-value">₹{{ '{:,.0f}'.format(analysis.market_revenue) }}</span>
+              </div>
+              <div class="revenue-item positive">
+                <span class="revenue-label">🏛️ MSP Revenue</span>
+                <span class="revenue-value">₹{{ '{:,.0f}'.format(analysis.msp_revenue) }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Input Costs & Subsidies Card -->
+        <section class="profit-card">
+          <div class="profit-card-header">
+            <h2>💸 Input Costs & Subsidies</h2>
+          </div>
+          <div class="profit-card-body">
+            <div class="cost-breakdown">
+              <div class="cost-item">
+                <span class="cost-label">Seeds & Seedlings</span>
+                <span class="cost-value negative">₹{{ '{:,.0f}'.format(analysis.seeds_cost) }}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Fertilizers & Pesticides</span>
+                <span class="cost-value negative">₹{{ '{:,.0f}'.format(analysis.fertilizers_cost) }}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Irrigation & Electricity</span>
+                <span class="cost-value negative">₹{{ '{:,.0f}'.format(analysis.irrigation_cost) }}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Labor Costs</span>
+                <span class="cost-value negative">₹{{ '{:,.0f}'.format(analysis.labor_cost) }}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Equipment & Maintenance</span>
+                <span class="cost-value negative">₹{{ '{:,.0f}'.format(analysis.equipment_cost) }}</span>
+              </div>
+              <div class="cost-item total-cost">
+                <span class="cost-label"><strong>Total Input Cost</strong></span>
+                <span class="cost-value negative"><strong>₹{{ '{:,.0f}'.format(analysis.total_input_cost) }}</strong></span>
+              </div>
+            </div>
+
+            <hr style="margin: 1.5rem 0;">
+
+            <div class="subsidy-section">
+              <h3 style="color: var(--primary-green-dark); margin-bottom: 1rem;">🎁 Government Subsidies & Benefits</h3>
+              <div class="subsidy-list">
+                {% for subsidy in analysis.subsidies %}
+                <div class="subsidy-item">
+                  <span class="subsidy-name">{{ subsidy.name }}</span>
+                  <span class="subsidy-value positive">₹{{ '{:,.0f}'.format(subsidy.amount) }}</span>
+                </div>
+                {% endfor %}
+                <div class="subsidy-item total-subsidy">
+                  <span class="subsidy-name"><strong>Total Subsidies/Benefits</strong></span>
+                  <span class="subsidy-value positive"><strong>₹{{ '{:,.0f}'.format(analysis.total_subsidies) }}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="net-cost-box">
+              <span class="net-cost-label">Net Input Cost (After Subsidies)</span>
+              <span class="net-cost-value">₹{{ '{:,.0f}'.format(analysis.net_input_cost) }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profitability Card -->
+        <section class="profit-card profit-summary">
+          <div class="profit-card-header">
+            <h2>📈 Profitability Analysis</h2>
+          </div>
+          <div class="profit-card-body">
+            <div class="profitability-grid">
+              <div class="profitability-item {% if analysis.net_profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                <span class="profitability-icon">💵</span>
+                <div class="profitability-details">
+                  <span class="profitability-label">Net Profit</span>
+                  <span class="profitability-value">₹{{ '{:,.0f}'.format(analysis.net_profit) }}</span>
+                </div>
+              </div>
+
+              <div class="profitability-item {% if analysis.profit_margin >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                <span class="profitability-icon">📊</span>
+                <div class="profitability-details">
+                  <span class="profitability-label">Profit Margin</span>
+                  <span class="profitability-value">{{ analysis.profit_margin }}%</span>
+                </div>
+              </div>
+
+              <div class="profitability-item {% if analysis.roi >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                <span class="profitability-icon">📈</span>
+                <div class="profitability-details">
+                  <span class="profitability-label">ROI (Return on Investment)</span>
+                  <span class="profitability-value">{{ analysis.roi }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="recommendation-box">
+              <h3>💡 Recommendation</h3>
+              <p>{{ analysis.recommendation }}</p>
+            </div>
+          </div>
+        </section>
+
+        <div style="text-align: center; margin-top: 2rem;">
+          <a href="/profit-analyser" class="back-link">← Analyse Another Farm</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

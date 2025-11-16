@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prediction Result - Tomato Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">🌿FarmIQ</a>
+        <ul class="navbar-menu">
+          <li class="navbar-item">
+            <a href="/" class="navbar-link active">Disease Prediction</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/profit-analyser" class="navbar-link">Profit Analyser</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/voice-ai" class="navbar-link">Voice AI</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <main class="container">
+        <header class="result-header">
+          <h1>🌿 Analysis Complete</h1>
+          <p class="muted">Your tomato leaf has been analyzed</p>
+        </header>
+
+        <section class="panel">
+          <div class="result-main">
+            <div class="result-image-container">
+              <img src="/static/{{ image_url }}" alt="Analyzed leaf image" class="result-image">
+            </div>
+
+            <div class="result-info">
+              <div class="result-item">
+                <div class="result-label">Diagnosis</div>
+                <div class="result-value {% if predicted_label.lower().startswith('healthy') %}healthy{% else %}diseased{% endif %}">
+                  {{ predicted_label.replace('_', ' ').title() }}
+                </div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Confidence</div>
+                <div class="result-value">{{ '%.1f' % confidence }}%</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Affected Rate</div>
+                <div class="result-value {% if affected_rate == 0 %}healthy{% else %}diseased{% endif %}">
+                  {{ '%.1f' % affected_rate }}%
+                </div>
+              </div>
+
+              <div class="result-item" style="border-bottom: none;">
+                <div class="result-label">Status</div>
+                <div class="result-value" style="font-size: 1.1rem;">
+                  {% if predicted_label.lower().startswith('healthy') %}
+                    ✅ Leaf is healthy
+                  {% else %}
+                    ⚠️ Treatment may be needed
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prob-table-container">
+            <h3>📊 Detailed Probabilities</h3>
+            {% for label, prob in prob_list[:8] %}
+            <div class="prob-row">
+              <div class="prob-label">{{ label.replace('_', ' ').title() }}</div>
+              <div class="prob-bar-container">
+                <div class="prob-bar" style="width: {{ prob * 100 }}%"></div>
+              </div>
+              <div class="prob-value">{{ '%.1f' % (prob * 100) }}%</div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <p class="small" style="margin-top: 1.5rem;">
+            <strong>Model info:</strong> {{ mapping_source }}
+          </p>
+
+          <div style="text-align: center;">
+            <a href="/" class="back-link">← Analyze Another Leaf</a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

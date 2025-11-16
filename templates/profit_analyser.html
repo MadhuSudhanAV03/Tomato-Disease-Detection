@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FarmIQ : Profit Analyser</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">🌿FarmIQ</a>
+        <ul class="navbar-menu">
+          <li class="navbar-item">
+            <a href="/" class="navbar-link">Disease Prediction</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/profit-analyser" class="navbar-link active">Profit Analyser</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/voice-ai" class="navbar-link">Voice AI</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <main class="container">
+        <header>
+          <h1>📊 Profit Analyser</h1>
+          <p class="muted">Analyze your tomato crop profitability and government benefits</p>
+        </header>
+
+        <section class="panel">
+          <h3 style="color: var(--primary-green-dark); margin-bottom: 1.5rem;">Enter Farm Details</h3>
+          
+          <form method="post" action="/profit-analyser/analyse" id="profit-form">
+            <div class="profit-form-grid">
+              <div class="form-group">
+                <label for="crop_type"> Crop Type</label>
+                <select id="crop_type" name="crop_type" class="form-select" required>
+                  <option value="">Select crop type...</option>
+                  <option value="Tomato">Tomato</option>
+                  <option value="Cherry Tomato">Cherry Tomato</option>
+                  <option value="Roma Tomato">Roma Tomato</option>
+                  <option value="Beefsteak Tomato">Beefsteak Tomato</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="season"> Growing Season</label>
+                <select id="season" name="season" class="form-select" required>
+                  <option value="">Select season...</option>
+                  <option value="Summer (Mar–Jun)">Summer (Mar–Jun)</option>
+                  <option value="Monsoon (Jul–Sep)">Monsoon (Jul–Sep)</option>
+                  <option value="Post Monsoon (Oct–Nov)">Post Monsoon (Oct–Nov)</option>
+                  <option value="Winter (Dec–Feb)">Winter (Dec–Feb)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="land_size"> Land Size (acres)</label>
+                <input type="number" id="land_size" name="land_size" class="form-input" 
+                       step="0.01" min="0.01" placeholder="e.g., 2.5" required>
+              </div>
+
+              <div class="form-group">
+                <label for="num_plants"> No. of Plants</label>
+                <input type="number" id="num_plants" name="num_plants" class="form-input" 
+                       step="1" min="1" placeholder="e.g., 5000" required>
+              </div>
+
+              <div class="form-group">
+                <label for="farming_type"> Farming Type</label>
+                <select id="farming_type" name="farming_type" class="form-select" required>
+                  <option value="">Select farming type...</option>
+                  <option value="Traditional">Traditional</option>
+                  <option value="Modern/Scientific">Modern/Scientific</option>
+                  <option value="Greenhouse">Greenhouse</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="organic"> Organic Farming</label>
+                <select id="organic" name="organic" class="form-select" required>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-lg">
+                📈 Analyse Profit Impact
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

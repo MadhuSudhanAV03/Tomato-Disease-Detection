@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FarmIQ : Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">🌿 FarmIQ</a>
+        <ul class="navbar-menu">
+          <li class="navbar-item">
+            <a href="/" class="navbar-link active">Disease Prediction</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/profit-analyser" class="navbar-link">Profit Analyser</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/voice-ai" class="navbar-link">Voice AI</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <main class="container">
+        <header>
+          <h1>Tomato Leaf Disease Detection</h1>
+          <p class="muted">Upload a leaf photo to get a prediction and confidence score.</p>
+        </header>
+
+        <section class="panel">
+          {% if not model_ready %}
+            <div class="alert alert-error">Model not loaded: {{ mapping_source }}</div>
+          {% endif %}
+
+          <form id="upload-form" method="post" action="/predict" enctype="multipart/form-data">
+            <div class="form-row">
+              <label for="file">Choose an image</label>
+              <input type="file" id="file" name="file" accept="image/*" required>
+            </div>
+
+            <div id="preview" class="preview" aria-live="polite">
+              <img id="preview-img" src="" alt="Image preview" style="display:none;">
+              <div id="preview-empty">No image selected</div>
+            </div>
+
+            <div class="form-row">
+              <button id="submit-btn" type="submit" class="btn" disabled>Upload & Predict</button>
+              <span id="spinner" class="spinner" aria-hidden="true" style="display:none">Processing…</span>
+            </div>
+          </form>
+
+          <hr />
+          <p class="small"><strong>Label mapping source:</strong> {{ mapping_source }}</p>
+          <p class="small">Uploaded images are stored temporarily in <code>static/uploads/</code>.</p>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/js/app.js" defer></script>
+  </body>
+</html>

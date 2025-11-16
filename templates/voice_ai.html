@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    
+   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FarmIQ : Voice AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <style>
+        .voice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .assistant-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .assistant-header h1 {
+            color: var(--primary-green);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .assistant-header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .voice-interface {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mic-button {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(45, 122, 62, 0.4);
+        }
+
+        .mic-button.recording {
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, #e53935, #ff6f00);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(229, 57, 53, 0.4);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 15px 40px rgba(229, 57, 53, 0.6);
+            }
+        }
+
+        .mic-icon {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        .status-text {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #666;
+            min-height: 30px;
+        }
+
+        .status-text.recording {
+            color: #e53935;
+            font-weight: 600;
+        }
+
+        .transcript-section,
+        .response-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: var(--primary-green);
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary-green);
+        }
+
+        .transcript-text,
+        .response-text {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 80px;
+            color: #333;
+            line-height: 1.8;
+            font-size: 1.05em;
+            text-align: left;
+            border-left: 4px solid var(--accent-green);
+            white-space: pre-wrap;
+        }
+
+        .response-text {
+            border-left-color: var(--primary-green);
+        }
+
+        .empty-state {
+            color: #999;
+            font-style: italic;
+        }
+
+        .audio-player {
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, rgba(45, 122, 62, 0.05), rgba(102, 187, 106, 0.05));
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-green);
+        }
+
+        .instructions h3 {
+            color: var(--primary-green);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions li:before {
+            content: "✓";
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #c62828;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">🌿FarmIQ</a>
+        <ul class="navbar-menu">
+          <li class="navbar-item">
+            <a href="/" class="navbar-link">Disease Prediction</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/profit-analyser" class="navbar-link">Profit Analyser</a>
+          </li>
+          <li class="navbar-item">
+            <a href="/voice-ai" class="navbar-link active">Voice AI</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="voice-container">
+        <div class="assistant-header">
+            <h1>🎙 ಕೃಷಿ ಧ್ವನಿ ಸಹಾಯಕ</h1>
+            <p class="subtitle">ಕೃಷಿ ಬಗ್ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳನ್ನು ಕನ್ನಡದಲ್ಲಿ ಕೇಳಿ</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>ಬಳಕೆ ವಿಧಾನ:</h3>
+            <ul>
+                <li>ಮೈಕ್ರೊಫೋನ್ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ</li>
+                <li>ಬೆಳೆ ರೋಗಗಳು, ಕೃಷಿ ಸಲಹೆಗಳು, ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು, ಅಥವಾ ಮಣ್ಣು ನಿರ್ವಹಣೆ ಬಗ್ಗೆ ಕೇಳಿ</li>
+                <li>ನಾನು ಕನ್ನಡದಲ್ಲಿ ಸಹಾಯಕ ಸಲಹೆಯೊಂದಿಗೆ ಉತ್ತರಿಸುತ್ತೇನೆ</li>
+                <li>ನಾನು ಕೇವಲ ಕೃಷಿ-ಸಂಬಂಧಿತ ಪ್ರಶ್ನೆಗಳಿಗೆ ಮಾತ್ರ ಉತ್ತರಿಸುತ್ತೇನೆ</li>
+            </ul>
+        </div>
+
+        <!-- Voice Interface -->
+        <div class="voice-interface">
+            <button class="mic-button" id="micButton">
+                <svg class="mic-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                </svg>
+            </button>
+            <div class="status-text" id="statusText">ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಪ್ರಾರಂಭಿಸಿ</div>
+
+            <div class="loading" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #666;">ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Transcript Section -->
+        <div class="transcript-section">
+            <div class="section-title">
+                <svg class="section-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                </svg>
+                ನಿಮ್ಮ ಪ್ರಶ್ನೆ
+            </div>
+            <div class="transcript-text" id="transcriptText">
+                <span class="empty-state">ನಿಮ್ಮ ಪ್ರಶ್ನೆ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ...</span>
+            </div>
+        </div>
+
+        <!-- Response Section -->
+        <div class="response-section">
+            <div class="section-title">
+                <svg class="section-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
+                </svg>
+                ಸಹಾಯಕ ಉತ್ತರ
+            </div>
+            <div class="response-text" id="responseText">
+                <span class="empty-state">ನನ್ನ ಉತ್ತರ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ...</span>
+            </div>
+            <div class="audio-player" id="audioPlayer" style="display: none;">
+                <audio controls id="responseAudio"></audio>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRecording = false;
+        let recognition = null;
+
+        // Initialize Speech Recognition (Kannada)
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'kn-IN';  // Kannada language
+        }
+
+        // Get DOM elements
+        const micButton = document.getElementById('micButton');
+        const statusText = document.getElementById('statusText');
+        const transcriptText = document.getElementById('transcriptText');
+        const responseText = document.getElementById('responseText');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const responseAudio = document.getElementById('responseAudio');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Microphone button click
+        micButton.addEventListener('click', function() {
+            if (!recognition) {
+                showError('ನಿಮ್ಮ ಬ್ರೌಸರ್ ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆಯನ್ನು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ. ದಯವಿಟ್ಟು Chrome ಅಥವಾ Edge ಬಳಸಿ.');
+                return;
+            }
+
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        });
+
+        function startRecording() {
+            isRecording = true;
+            micButton.classList.add('recording');
+            statusText.classList.add('recording');
+            updateStatusText('🎤 ಕೇಳುತ್ತಿದೆ... ಈಗ ಮಾತನಾಡಿ');
+            hideError();
+
+            recognition.start();
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            micButton.classList.remove('recording');
+            statusText.classList.remove('recording');
+            updateStatusText('ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...');
+            
+            recognition.stop();
+        }
+
+        // Speech recognition events
+        if (recognition) {
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                transcriptText.innerHTML = transcript;
+                
+                // Send to backend
+                processQuestion(transcript);
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                isRecording = false;
+                micButton.classList.remove('recording');
+                statusText.classList.remove('recording');
+                
+                if (event.error === 'no-speech') {
+                    showError('ಯಾವುದೇ ಮಾತು ಪತ್ತೆಯಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.');
+                } else if (event.error === 'not-allowed') {
+                    showError('ಮೈಕ್ರೊಫೋನ್ ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಅನುಮತಿಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.');
+                } else {
+                    showError('ಮಾತು ಗುರುತಿಸುವಲ್ಲಿ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.');
+                }
+                
+                updateStatusText('ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ');
+            };
+
+            recognition.onend = function() {
+                if (isRecording) {
+                    isRecording = false;
+                    micButton.classList.remove('recording');
+                    statusText.classList.remove('recording');
+                }
+            };
+        }
+
+        function processQuestion(question) {
+            loadingSpinner.classList.add('active');
+            hideError();
+
+            fetch('/voice-ai/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingSpinner.classList.remove('active');
+                
+                if (data.success) {
+                    responseText.innerHTML = data.response;
+                    
+                    // Play audio response
+                    if (data.audio_url) {
+                        responseAudio.src = data.audio_url;
+                        audioPlayer.style.display = 'block';
+                        responseAudio.play();
+                    }
+                    
+                    updateStatusText('✓ ಉತ್ತರ ಸಿದ್ಧವಾಗಿದೆ. ಮತ್ತೊಂದು ಪ್ರಶ್ನೆ ಕೇಳಲು ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ.');
+                } else {
+                    showError(data.error || 'ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ವಿಫಲವಾಗಿದೆ');
+                    updateStatusText('ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingSpinner.classList.remove('active');
+                showError('ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.');
+                updateStatusText('ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ');
+            });
+        }
+
+        function updateStatusText(text) {
+            statusText.textContent = text;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
